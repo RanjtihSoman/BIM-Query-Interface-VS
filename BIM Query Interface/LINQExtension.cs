@@ -8,36 +8,32 @@ namespace BIM_Query_Interface
 {
     public static class LINQExtension
     {
+        //Fetched IFC Parser object by passing lineno argument
         public static IFCparser Getobjectfromlineno(this IList<IFCparser> source, int lineno)
         {
 
-            //return source.FirstOrDefault(x => x.lineno == lineno);
+           
             IEnumerable<IFCparser> ifcLines = from ifcobjects in source
                                               where ifcobjects.lineno == lineno
                                               select ifcobjects;
             return ifcLines.Any() ? ifcLines.First() : null;
         }
 
+        //Populates the objects based on the parameters
         public static IEnumerable<IFCparser> EnrichIfCparser(this IList<IFCparser> source)
         {
-            int count = 0;
-            float percent;
+
             try
             {
-                IEnumerable< IFCparser > Relassignlist = from ifcobject in source
-                    where (string.Compare(ifcobject.IFCclass, "IFCRELASSIGNSTASKS", true) == 0)
-                    select ifcobject;
+                IEnumerable<IFCparser> Relassignlist = from ifcobject in source
+                                                       where (string.Compare(ifcobject.IFCclass, "IFCRELASSIGNSTASKS", true) == 0)
+                                                       select ifcobject;
                 int total = Relassignlist.Count();
                 foreach (var ifcobject in Relassignlist)
                 {
-                    count++;
-                    //to check status
-                    percent = count/total *100;
-                    ifcobject.taskassignment=new IFCrelassignstask(ifcobject.IFCdata,source,ifcobject.lineno );
+                    ifcobject.taskassignment = new IFCrelassignstask(ifcobject.IFCdata, source, ifcobject.lineno);
                 }
-
                 return Relassignlist;
-
             }
             catch (Exception e)
             {
@@ -46,14 +42,15 @@ namespace BIM_Query_Interface
             }
         }
 
-        public static IEnumerable<IFCrelassignstask > returntasksondate(this IEnumerable< IFCparser> source,DateTime selecteddate)
+        //return the taskassignments for a certain date
+        public static IEnumerable<IFCrelassignstask> returntasksondate(this IEnumerable<IFCparser> source, DateTime selecteddate)
         {
-            
+
             IEnumerable<IFCrelassignstask> taskassignments = from ifcobject in source
-                                                             where (DateTime.Compare(ifcobject.taskassignment.IfcScheduleTimeControlInstance.scheduledstartdate.date.date , selecteddate )<=0) && (DateTime.Compare(ifcobject.taskassignment.IfcScheduleTimeControlInstance.scheduledenddate.date.date, selecteddate)>=0)
+                                                             where (DateTime.Compare(ifcobject.taskassignment.IfcScheduleTimeControlInstance.scheduledstartdate.date.date, selecteddate) <= 0) && (DateTime.Compare(ifcobject.taskassignment.IfcScheduleTimeControlInstance.scheduledenddate.date.date, selecteddate) >= 0)
                                                              select ifcobject.taskassignment;
 
-            return taskassignments ;
+            return taskassignments;
         }
 
     }
