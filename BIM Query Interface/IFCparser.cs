@@ -223,7 +223,7 @@ namespace BIM_Query_Interface
             }
         }
     }
-    //Removes special charecters in lineno entry
+    //Removes special charecters in lineno entry in IFC file
     class dataparser
     {
         public dataparser()
