@@ -9,10 +9,9 @@ using System.Windows.Forms;
 
 namespace BIM_Query_Interface
 {
+    //Basic object
     public class IFCparser
     {
-
-
         public int lineno;
         public string IFCclass;
         public String IFCdata;
@@ -22,6 +21,7 @@ namespace BIM_Query_Interface
         public IFCDateAndTime dateandtime;
         public IFCdate date;
 
+        //Parses data in each line to Line no, IFCClass and IFFC Data
         public IFCparser(string InputData)
         {
             int first_paranthesis;
@@ -42,8 +42,6 @@ namespace BIM_Query_Interface
                 IFCclass = InputData.Substring(startof_IFC, first_paranthesis - startof_IFC - 1);
                 IFCdata = InputData.Substring(first_paranthesis, last_paranthesis - first_paranthesis);
 
-
-                //Assigntask = new IFCrelassignstask(IFCdata);
             }
             catch (Exception e)
             {
@@ -55,7 +53,7 @@ namespace BIM_Query_Interface
     }
 
 
-
+    //Handles IFCRELASSIGNS class
     public class IFCrelassignstask
     {
 
@@ -72,6 +70,7 @@ namespace BIM_Query_Interface
                 dataparser o = new dataparser();
                 string[] tempstringarray;
                 tempstringarray = InputData.Split(',');
+
                 IFCobject = source.Getobjectfromlineno(Int32.Parse(o.Getlinenodata(tempstringarray[4])));
                 IFCobject.task = new IFCtask(IFCobject.IFCdata, IFCobject.lineno);
                 IFCtaskinstance = IFCobject.task;
@@ -106,25 +105,14 @@ namespace BIM_Query_Interface
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to parse the IFCRELASSIGNS. {0}", e.ToString());
                 throw;
             }
         }
-        public IFCrelassignstask(IFCtask taskinput, IFCScheduleTimeControl schedulecControlinput)
-        {
-            try
-            {
-                IFCtaskinstance = taskinput;
-                IfcScheduleTimeControlInstance = schedulecControlinput;
-            }
 
-            catch (Exception e)
-            {
-                throw;
-            }
-
-        }
     }
 
+    //Handles IFCtask class
     public class IFCtask
     {
         public string name;
@@ -143,6 +131,7 @@ namespace BIM_Query_Interface
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to parse IFCtask. {0}", e.ToString());
                 throw;
             }
 
@@ -150,6 +139,7 @@ namespace BIM_Query_Interface
 
     }
 
+    //Handles IFCScheduleTimeControl class
     public class IFCScheduleTimeControl
     {
         public IFCparser IFCobject;
@@ -172,16 +162,18 @@ namespace BIM_Query_Interface
                 IFCobject = source.Getobjectfromlineno(Int32.Parse(o.Getlinenodata(tempstringarray[12])));
                 IFCobject.dateandtime = new IFCDateAndTime(IFCobject.IFCdata, source, IFCobject.lineno);
                 scheduledenddate = IFCobject.dateandtime;
-                
+
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to parse IFCScheduletimecontrol. {0}", e.ToString());
                 throw;
             }
 
         }
     }
 
+    //Handles IFCDateAndTime
     public class IFCDateAndTime
     {
         public int dateandtimelineno;
@@ -193,24 +185,23 @@ namespace BIM_Query_Interface
             try
             {
                 dateandtimelineno = lineno;
-                int datelineno ;
+                int datelineno;
                 dataparser o = new dataparser();
                 string[] tempstringarray;
                 tempstringarray = inputdata.Split(',');
                 datelineno = Int32.Parse(o.Getlinenodata(tempstringarray[0]));
-                ifcobject = source.Getobjectfromlineno(datelineno );
-                ifcobject.date = new IFCdate(ifcobject.IFCdata,datelineno);
+                ifcobject = source.Getobjectfromlineno(datelineno);
+                ifcobject.date = new IFCdate(ifcobject.IFCdata, datelineno);
                 date = ifcobject.date;
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to parse IFCDateandTime. {0}", e.ToString());
                 throw;
             }
-
-
         }
     }
-
+    //Handles IFCDate class
     public class IFCdate
     {
         public DateTime date;
@@ -227,11 +218,12 @@ namespace BIM_Query_Interface
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to parse IFCDate. {0}", e.ToString());
                 throw;
             }
         }
     }
-
+    //Removes special charecters in lineno entry
     class dataparser
     {
         public dataparser()
