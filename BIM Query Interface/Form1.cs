@@ -176,6 +176,7 @@ namespace BIM_Query_Interface
             }
         }
 
+        //read the line into a list and then enrich the list containing IFCRELASSIGNS
         private void Open_Click(object sender, EventArgs e)
         {
             filename = TextBox_Filename.Text;
