@@ -23,24 +23,7 @@ namespace BIM_Query_Interface
         private Label label_filename;
         private XBIM_IFC_Parser  model;
         
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog_IFC = new OpenFileDialog();
-
-            openFileDialog_IFC.InitialDirectory = @"F:\Code repo\BIM Query Interface";
-            openFileDialog_IFC.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog_IFC.FilterIndex = 2;
-            openFileDialog_IFC.RestoreDirectory = true;
-
-            if (openFileDialog_IFC.ShowDialog() == DialogResult.OK)
-            {
-                filename = openFileDialog_IFC.FileName;
-                TextBox_Filename.Text = filename;
-                TextBox_Filename.Update();
-
-            }
-        }
-
+        
         //read the line into a list and then enrich the list containing IFCRELASSIGNS
         private void Open_Click(object sender, EventArgs e)
         {
@@ -70,18 +53,40 @@ namespace BIM_Query_Interface
                 DateTime selecteddate = new DateTime(Int32.Parse(tempstring[2]), Int32.Parse(tempstring[1]), Int32.Parse(tempstring[0]));
                 string outputstring = null;
                 string currentoutputstring = textBox_output.Text;
+                IEnumerable<IIfcTask> Tasks = model.model.Instances.OfType<IIfcTask>();
+                IEnumerable<IIfcTask> SelectedTasks = Tasks.Gettasksondate(selecteddate);
 
-               
+
             }
             else { messageboxopen("Enter query", "No query found"); }
         }
+
 
         public BIM_Query_Interface()
         {
             InitializeComponent();
         }
 
+
         //save the filename to the string
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog_IFC = new OpenFileDialog();
+
+            openFileDialog_IFC.InitialDirectory = @"F:\Code repo\BIM Query Interface";
+            openFileDialog_IFC.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog_IFC.FilterIndex = 2;
+            openFileDialog_IFC.RestoreDirectory = true;
+
+            if (openFileDialog_IFC.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog_IFC.FileName;
+                TextBox_Filename.Text = filename;
+                TextBox_Filename.Update();
+
+            }
+        }
 
         private void messageboxopen(string message, string caption)
         {
