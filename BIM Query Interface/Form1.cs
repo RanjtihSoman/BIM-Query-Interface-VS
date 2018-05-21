@@ -21,17 +21,67 @@ namespace BIM_Query_Interface
         private Label label_Output;
         private Label label_EnterQuery;
         private Label label_filename;
-        IList<IFCparser> IFClines;
-        private IEnumerable<IFCparser> Taskassignments;
         private XBIM_IFC_Parser  model;
+        
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog_IFC = new OpenFileDialog();
+
+            openFileDialog_IFC.InitialDirectory = @"F:\Code repo\BIM Query Interface";
+            openFileDialog_IFC.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog_IFC.FilterIndex = 2;
+            openFileDialog_IFC.RestoreDirectory = true;
+
+            if (openFileDialog_IFC.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog_IFC.FileName;
+                TextBox_Filename.Text = filename;
+                TextBox_Filename.Update();
+
+            }
+        }
+
+        //read the line into a list and then enrich the list containing IFCRELASSIGNS
+        private void Open_Click(object sender, EventArgs e)
+        {
+            filename = TextBox_Filename.Text;
+        Boolean flag = true;
+            if (filename != null)
+            {
+                model = new XBIM_IFC_Parser(filename);
+
+            }
+            else
+            {
+                messageboxopen("You did not enter a file name. ", "No file Name Specified");
+
+            }
+            messageboxopen("end of file", "process complete");
+        }
+
+        
+
+        private void button_SubmitQuery_Click(object sender, EventArgs e)
+        {
+            if (textBox_Query.Text != null)
+            {
+                String QueryString = textBox_Query.Text;
+                string[] tempstring = QueryString.Split('/');
+                DateTime selecteddate = new DateTime(Int32.Parse(tempstring[2]), Int32.Parse(tempstring[1]), Int32.Parse(tempstring[0]));
+                string outputstring = null;
+                string currentoutputstring = textBox_output.Text;
+
+               
+            }
+            else { messageboxopen("Enter query", "No query found"); }
+        }
+
         public BIM_Query_Interface()
         {
             InitializeComponent();
         }
 
         //save the filename to the string
-
-
 
         private void messageboxopen(string message, string caption)
         {
@@ -45,9 +95,6 @@ namespace BIM_Query_Interface
                 MessageBoxOptions.RightAlign);
 
         }
-
-
-
         private void InitializeComponent()
         {
             this.TextBox_Filename = new System.Windows.Forms.TextBox();
@@ -159,85 +206,6 @@ namespace BIM_Query_Interface
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog_IFC = new OpenFileDialog();
-
-            openFileDialog_IFC.InitialDirectory = @"F:\Code repo\BIM Query Interface";
-            openFileDialog_IFC.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog_IFC.FilterIndex = 2;
-            openFileDialog_IFC.RestoreDirectory = true;
-
-            if (openFileDialog_IFC.ShowDialog() == DialogResult.OK)
-            {
-                filename = openFileDialog_IFC.FileName;
-                TextBox_Filename.Text = filename;
-                TextBox_Filename.Update();
-
-            }
-        }
-
-        //read the line into a list and then enrich the list containing IFCRELASSIGNS
-        private void Open_Click(object sender, EventArgs e)
-        {
-            filename = TextBox_Filename.Text;
-            IFClines = new List<IFCparser>();
-            string lines;
-            Boolean flag = true;
-            if (filename != null)
-            {
-                model = new XBIM_IFC_Parser(filename);
-
-            }
-            else
-            {
-                messageboxopen("You did not enter a file name. ", "No file Name Specified");
-
-            }
-
-
-
-            messageboxopen("end of file", "process complete");
-        }
-
-        
-
-        private void button_SubmitQuery_Click(object sender, EventArgs e)
-        {
-            if (textBox_Query.Text != null)
-            {
-                String QueryString = textBox_Query.Text;
-                string[] tempstring = QueryString.Split('/');
-                DateTime selecteddate = new DateTime(Int32.Parse(tempstring[2]), Int32.Parse(tempstring[1]), Int32.Parse(tempstring[0]));
-                string outputstring = null;
-                string currentoutputstring = textBox_output.Text;
-
-                IEnumerable<IFCrelassignstask> assignments = Taskassignments.returntasksondate(selecteddate);
-                if (assignments.Count() > 0)
-                {
-                    textBox_output.Text = System.Environment.NewLine + string.Format("Output of {0} : \n", QueryString);
-                    textBox_output.Text = textBox_output.Text + System.Environment.NewLine;
-                    foreach (var instance in assignments)
-                    {
-                        outputstring = string.Format("{0}\t{1}\t{2}\t{3}", instance.IFCtaskinstance.taskID,
-                            instance.IFCtaskinstance.name,
-                            instance.IfcScheduleTimeControlInstance.scheduledstartdate.date.date.ToShortDateString(),
-                            instance.IfcScheduleTimeControlInstance.scheduledenddate.date.date.ToShortDateString());
-                        textBox_output.Text = textBox_output.Text + System.Environment.NewLine + outputstring;
-                    }
-
-                    textBox_output.Text = textBox_output.Text + System.Environment.NewLine + currentoutputstring;
-                    textBox_output.Update();
-                }
-                else
-                {
-                    textBox_output.Text = System.Environment.NewLine + "No tasks scheduled for the date: " + selecteddate.ToShortDateString();
-                }
-
-            }
-            else { messageboxopen("Enter query", "No query found"); }
         }
     }
 
