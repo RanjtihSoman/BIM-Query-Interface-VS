@@ -27,7 +27,7 @@ namespace BIM_Query_Interface
         }
 
         //save the filename to the string
-        
+
 
 
         private void messageboxopen(string message, string caption)
@@ -43,7 +43,7 @@ namespace BIM_Query_Interface
 
         }
 
-       
+
 
         private void InitializeComponent()
         {
@@ -215,7 +215,7 @@ namespace BIM_Query_Interface
 
                             }
                         }
-                       Taskassignments  = IFClines.EnrichIfCparser();
+                        Taskassignments = IFClines.EnrichIfCparser();
                     }
                     else
                     {
@@ -235,7 +235,7 @@ namespace BIM_Query_Interface
 
             }
 
-           
+
 
             messageboxopen("end of file", "process complete");
         }
@@ -246,14 +246,14 @@ namespace BIM_Query_Interface
             {
                 String QueryString = textBox_Query.Text;
                 string[] tempstring = QueryString.Split('/');
-                DateTime selecteddate=new DateTime(Int32.Parse( tempstring[2]),Int32.Parse(tempstring[1]),Int32.Parse(tempstring[0]));
-                string outputstring=null;
-                string currentoutputstring=textBox_output.Text ;
-               
-               IEnumerable<IFCrelassignstask> assignments = Taskassignments.returntasksondate(selecteddate);
+                DateTime selecteddate = new DateTime(Int32.Parse(tempstring[2]), Int32.Parse(tempstring[1]), Int32.Parse(tempstring[0]));
+                string outputstring = null;
+                string currentoutputstring = textBox_output.Text;
+
+                IEnumerable<IFCrelassignstask> assignments = Taskassignments.returntasksondate(selecteddate);
                 if (assignments.Count() > 0)
                 {
-                    textBox_output.Text = System.Environment.NewLine+string.Format("Output of {0} : \n", QueryString);
+                    textBox_output.Text = System.Environment.NewLine + string.Format("Output of {0} : \n", QueryString);
                     textBox_output.Text = textBox_output.Text + System.Environment.NewLine;
                     foreach (var instance in assignments)
                     {
@@ -261,8 +261,7 @@ namespace BIM_Query_Interface
                             instance.IFCtaskinstance.name,
                             instance.IfcScheduleTimeControlInstance.scheduledstartdate.date.date.ToShortDateString(),
                             instance.IfcScheduleTimeControlInstance.scheduledenddate.date.date.ToShortDateString());
-                        textBox_output.Text  = textBox_output.Text  + System.Environment.NewLine  + outputstring;
-
+                        textBox_output.Text = textBox_output.Text + System.Environment.NewLine + outputstring;
                     }
 
                     textBox_output.Text = textBox_output.Text + System.Environment.NewLine + currentoutputstring;
@@ -270,13 +269,13 @@ namespace BIM_Query_Interface
                 }
                 else
                 {
-                    textBox_output.Text = System.Environment.NewLine+ "No tasks scheduled for the date: "+ selecteddate.ToShortDateString() ;
+                    textBox_output.Text = System.Environment.NewLine + "No tasks scheduled for the date: " + selecteddate.ToShortDateString();
                 }
 
             }
-            else { messageboxopen("Enter query","No query found");}
+            else { messageboxopen("Enter query", "No query found"); }
         }
     }
-    
+
 }
-    
+
