@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using Xbim.Ifc;
+using Xbim.Ifc4.Interfaces;
 
 namespace BIM_Query_Interface
 {
@@ -21,6 +23,7 @@ namespace BIM_Query_Interface
         private Label label_filename;
         IList<IFCparser> IFClines;
         private IEnumerable<IFCparser> Taskassignments;
+        private XBIM_IFC_Parser  model;
         public BIM_Query_Interface()
         {
             InitializeComponent();
@@ -185,49 +188,8 @@ namespace BIM_Query_Interface
             Boolean flag = true;
             if (filename != null)
             {
-                try
-                {
-                    if (System.IO.File.Exists(filename))
-                    {
-                        using (System.IO.StreamReader InputStream = new System.IO.StreamReader(filename))
-                        {
-                            while (InputStream.Peek() >= 0 && flag)
-                            {
-                                lines = null;
-                                lines = InputStream.ReadLine();
-                                if (string.Compare(lines, "DATA;", true) == 0)
-                                {
-                                    while ((InputStream.Peek() >= 0) && flag)
-                                    {
-                                        lines = null;
-                                        lines = InputStream.ReadLine();
-                                        if (!(string.Compare(lines, "ENDSEC;", true) == 0))
-                                        {
-                                            IFCparser component1 = new IFCparser(lines);
-                                            IFClines.Add(component1);
-                                        }
-                                        else
-                                        {
-                                            flag = false;
-                                        }
-                                    }
-                                }
+                model = new XBIM_IFC_Parser(filename);
 
-                            }
-                        }
-                        Taskassignments = IFClines.EnrichIfCparser();
-                    }
-                    else
-                    {
-                        messageboxopen("File doesnt exist", "Invalid file");
-                    }
-
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("Failed to read the lines. {0}", exception.ToString());
-                    throw;
-                }
             }
             else
             {
@@ -239,6 +201,8 @@ namespace BIM_Query_Interface
 
             messageboxopen("end of file", "process complete");
         }
+
+        
 
         private void button_SubmitQuery_Click(object sender, EventArgs e)
         {
